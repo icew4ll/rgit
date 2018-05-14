@@ -13,10 +13,18 @@ struct Cli {
     #[structopt(long = "verbose", short = "v", parse(from_occurrences))]
     verbosity: u8,
 }
+
+fn all() {
+    gitpush("/home/rev/m/vim".to_string());
+    gitpush("/home/rev/m/dot".to_string());
+    gitpush("/home/rev/m/rgit".to_string());
+}
+
 main!(|args: Cli, log_level: verbosity| match args.git.as_ref() {
     "vim" => gitpush("/home/rev/m/vim".to_string()),
     "dot" => gitpush("/home/rev/m/dot".to_string()),
     "rgit" => gitpush("/home/rev/m/rgit".to_string()),
+    "all" => all(),
     _ => println!("none"),
 });
 
