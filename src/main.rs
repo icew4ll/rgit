@@ -1,4 +1,8 @@
 #[macro_use]
+extern crate serde_derive;
+extern crate envy;
+
+#[macro_use]
 extern crate quicli;
 extern crate chrono;
 extern crate subprocess;
@@ -14,22 +18,35 @@ struct Cli {
     verbosity: u8,
 }
 
-fn all() {
-    gitpush("/home/rev/m/vim".to_string());
-    gitpush("/home/rev/m/dot".to_string());
-    gitpush("/home/rev/m/rgit".to_string());
+#[derive(Deserialize, Debug)]
+struct Config {
+  home: String,
 }
 
+
 main!(|args: Cli, log_level: verbosity| match args.git.as_ref() {
-    "vim" => gitpush("/home/rev/m/vim".to_string()),
-    "dot" => gitpush("/home/rev/m/dot".to_string()),
-    "rgit" => gitpush("/home/rev/m/rgit".to_string()),
+    "vim" => gitpush("/home/ice/m/vim".to_string()),
+    "dot" => gitpush("/home/ice/m/dot".to_string()),
+    "rgit" => gitpush("/home/ice/m/rgit".to_string()),
     "all" => all(),
     _ => println!("none"),
 });
 
+fn all() {
+    gitpush("/home/ice/m/vim".to_string());
+    gitpush("/home/ice/m/dot".to_string());
+    gitpush("/home/ice/m/rgit".to_string());
+}
+
 // gitpush {{{
 fn gitpush(pwd: String) {
+    match envy::from_env::<Config>() {
+       Ok(config) => dirify(config.home),
+       Err(error) => panic!("{:#?}", error),
+    }
+    fn dirify(dir: String) {
+       println!("{}", dir);
+    }
     let utc: DateTime<Utc> = Utc::now();
     println!("{}", utc);
     let out = Exec::cmd("git")
