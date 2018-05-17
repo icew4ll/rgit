@@ -23,32 +23,40 @@ main!(|args: Cli, log_level: verbosity| match args.git.as_ref() {
     "vim" => gitpush("/m/vim".to_string()),
     "dot" => gitpush("/m/dot".to_string()),
     "rgit" => gitpush("/m/rgit".to_string()),
-    "rc" => rsync(),
-    "all" => all(),
+    "pd" => pushdot(),
+    "ud" => pulldot(),
+    "pa" => pushall(),
     _ => println!("none"),
 });
 // }}}
 // all {{{
-fn all() {
-    rsync();
+fn pushall() {
+    pushdot();
     gitpush("/m/vim".to_string());
     gitpush("/m/dot".to_string());
     gitpush("/m/rgit".to_string());
 }
 // }}}
-// rsync {{{
-fn rsync() {
+// push dot files to m/dot folder {{{
+fn pushdot() {
     let home = dotenv!("HOME");
+    let dot = format!("{}/m/dot", home);
     let nvim = format!("{}/.config/nvim/init.vim", home);
     let tmux = format!("{}/.tmux.conf.local", home);
     let ion = format!("{}/.config/ion/initrc", home);
     let alac = format!("{}/.config/alacritty/alacritty.yml", home);
+    println!("{}", home);
+    println!("{}", dot);
+    println!("{}", nvim);
+    println!("{}", tmux);
+    println!("{}", ion);
+    println!("{}", alac);
     let out = Exec::cmd("rsync")
         .arg("-av")
         .arg("-P")
         .arg(nvim)
         .arg(".")
-        .cwd("/home/ice/m/dot/")
+        .cwd(&dot)
         .stdout(Redirection::Pipe)
         .stderr(Redirection::Merge)
         .capture()
@@ -60,7 +68,7 @@ fn rsync() {
         .arg("-P")
         .arg(tmux)
         .arg(".")
-        .cwd("/home/ice/m/dot/")
+        .cwd(&dot)
         .stdout(Redirection::Pipe)
         .stderr(Redirection::Merge)
         .capture()
@@ -72,7 +80,7 @@ fn rsync() {
         .arg("-P")
         .arg(ion)
         .arg(".")
-        .cwd("/home/ice/m/dot/")
+        .cwd(&dot)
         .stdout(Redirection::Pipe)
         .stderr(Redirection::Merge)
         .capture()
@@ -84,7 +92,72 @@ fn rsync() {
         .arg("-P")
         .arg(alac)
         .arg(".")
-        .cwd("/home/ice/m/dot/")
+        .cwd(&dot)
+        .stdout(Redirection::Pipe)
+        .stderr(Redirection::Merge)
+        .capture()
+        .expect("failed to execute")
+        .stdout_str();
+    println!("{}", out);
+}
+// }}}
+// pull dot files to m/dot folder {{{
+fn pulldot() {
+    // Setup Paths
+    let home = dotenv!("HOME");
+    let dot = format!("{}/m/dot", home);
+    let nvim = format!("{}/.config/nvim/init.vim", home);
+    let tmux = format!("{}/.tmux.conf.local", home);
+    let ion = format!("{}/.config/ion/initrc", home);
+    let alac = format!("{}/.config/alacritty/alacritty.yml", home);
+    println!("{}", home);
+    println!("{}", dot);
+    println!("{}", nvim);
+    println!("{}", tmux);
+    println!("{}", ion);
+    println!("{}", alac);
+    let out = Exec::cmd("rsync")
+        .arg("-av")
+        .arg("-P")
+        .arg(&dot)
+        .arg(".")
+        .cwd(nvim)
+        .stdout(Redirection::Pipe)
+        .stderr(Redirection::Merge)
+        .capture()
+        .expect("failed to execute")
+        .stdout_str();
+    println!("{}", out);
+    let out = Exec::cmd("rsync")
+        .arg("-av")
+        .arg("-P")
+        .arg(&dot)
+        .arg(".")
+        .cwd(tmux)
+        .stdout(Redirection::Pipe)
+        .stderr(Redirection::Merge)
+        .capture()
+        .expect("failed to execute")
+        .stdout_str();
+    println!("{}", out);
+    let out = Exec::cmd("rsync")
+        .arg("-av")
+        .arg("-P")
+        .arg(&dot)
+        .arg(".")
+        .cwd(ion)
+        .stdout(Redirection::Pipe)
+        .stderr(Redirection::Merge)
+        .capture()
+        .expect("failed to execute")
+        .stdout_str();
+    println!("{}", out);
+    let out = Exec::cmd("rsync")
+        .arg("-av")
+        .arg("-P")
+        .arg(&dot)
+        .arg(".")
+        .cwd(alac)
         .stdout(Redirection::Pipe)
         .stderr(Redirection::Merge)
         .capture()
