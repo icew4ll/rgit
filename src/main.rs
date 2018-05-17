@@ -20,14 +20,14 @@ struct Cli {
 
 #[derive(Deserialize, Debug)]
 struct Config {
-  home: String,
+    home: String,
 }
-
 
 main!(|args: Cli, log_level: verbosity| match args.git.as_ref() {
     "vim" => gitpush("/home/ice/m/vim".to_string()),
     "dot" => gitpush("/home/ice/m/dot".to_string()),
     "rgit" => gitpush("/home/ice/m/rgit".to_string()),
+    "rc" => rsync(),
     "all" => all(),
     _ => println!("none"),
 });
@@ -38,14 +38,65 @@ fn all() {
     gitpush("/home/ice/m/rgit".to_string());
 }
 
+fn rsync() {
+    let out = Exec::cmd("rsync")
+        .arg("-av")
+        .arg("-P")
+        .arg("/home/ice/.config/nvim/init.vim")
+        .arg(".")
+        .cwd("/home/ice/m/dot/")
+        .stdout(Redirection::Pipe)
+        .stderr(Redirection::Merge)
+        .capture()
+        .expect("failed to execute")
+        .stdout_str();
+    println!("{}", out);
+    let out = Exec::cmd("rsync")
+        .arg("-av")
+        .arg("-P")
+        .arg("/home/ice/.tmux.conf.local")
+        .arg(".")
+        .cwd("/home/ice/m/dot/")
+        .stdout(Redirection::Pipe)
+        .stderr(Redirection::Merge)
+        .capture()
+        .expect("failed to execute")
+        .stdout_str();
+    println!("{}", out);
+    let out = Exec::cmd("rsync")
+        .arg("-av")
+        .arg("-P")
+        .arg("/home/ice/.config/ion/initrc")
+        .arg(".")
+        .cwd("/home/ice/m/dot/")
+        .stdout(Redirection::Pipe)
+        .stderr(Redirection::Merge)
+        .capture()
+        .expect("failed to execute")
+        .stdout_str();
+    println!("{}", out);
+    let out = Exec::cmd("rsync")
+        .arg("-av")
+        .arg("-P")
+        .arg("/home/ice/.config/alacritty/alacritty.yml")
+        .arg(".")
+        .cwd("/home/ice/m/dot/")
+        .stdout(Redirection::Pipe)
+        .stderr(Redirection::Merge)
+        .capture()
+        .expect("failed to execute")
+        .stdout_str();
+    println!("{}", out);
+}
+
 // gitpush {{{
 fn gitpush(pwd: String) {
     match envy::from_env::<Config>() {
-       Ok(config) => dirify(config.home),
-       Err(error) => panic!("{:#?}", error),
+        Ok(config) => dirify(config.home),
+        Err(error) => panic!("{:#?}", error),
     }
     fn dirify(dir: String) {
-       println!("{}", dir);
+        println!("{}", dir);
     }
     let utc: DateTime<Utc> = Utc::now();
     println!("{}", utc);
