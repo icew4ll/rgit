@@ -20,17 +20,17 @@ struct Cli {
 
 // main {{{
 main!(|args: Cli, log_level: verbosity| match args.git.as_ref() {
-    "vim" => gitpush("/m/vim".to_string()),
-    "dot" => gitpush("/m/dot".to_string()),
-    "rgit" => gitpush("/m/rgit".to_string()),
+    "gitvim" => gitpush("/m/vim".to_string()),
+    "gitdot" => gitpush("/m/dot".to_string()),
+    "gitrgit" => gitpush("/m/rgit".to_string()),
     "pushdot" => pushdot(),
     "pulldot" => pulldot(),
-    "pushall" => pushall(),
+    "gitall" => gitall(),
     _ => println!("none"),
 });
 // }}}
-// all {{{
-fn pushall() {
+// gitall {{{
+fn gitall() {
     pushdot();
     gitpush("/m/vim".to_string());
     gitpush("/m/dot".to_string());
