@@ -23,9 +23,9 @@ main!(|args: Cli, log_level: verbosity| match args.git.as_ref() {
     "vim" => gitpush("/m/vim".to_string()),
     "dot" => gitpush("/m/dot".to_string()),
     "rgit" => gitpush("/m/rgit".to_string()),
-    "pd" => pushdot(),
-    "ud" => pulldot(),
-    "pa" => pushall(),
+    "pushdot" => pushdot(),
+    "pulldot" => pulldot(),
+    "pushall" => pushall(),
     _ => println!("none"),
 });
 // }}}
@@ -106,10 +106,14 @@ fn pulldot() {
     // Setup Paths
     let home = dotenv!("HOME");
     let dot = format!("{}/m/dot", home);
-    let nvim = format!("{}/.config/nvim/init.vim", home);
-    let tmux = format!("{}/.tmux.conf.local", home);
-    let ion = format!("{}/.config/ion/initrc", home);
-    let alac = format!("{}/.config/alacritty/alacritty.yml", home);
+    let nvim = format!("{}/.config/nvim", home);
+    let tmux = format!("{}", home);
+    let ion = format!("{}/.config/ion", home);
+    let alac = format!("{}/.config/alacritty", home);
+    let dotnvim = format!("init.vim");
+    let dottmux = format!(".tmux.conf.local");
+    let dotion = format!("initrc");
+    let dotalac = format!("alacritty.yml");
     println!("{}", home);
     println!("{}", dot);
     println!("{}", nvim);
@@ -119,7 +123,7 @@ fn pulldot() {
     let out = Exec::cmd("rsync")
         .arg("-av")
         .arg("-P")
-        .arg(&dot)
+        .arg(dotnvim)
         .arg(".")
         .cwd(nvim)
         .stdout(Redirection::Pipe)
@@ -131,7 +135,7 @@ fn pulldot() {
     let out = Exec::cmd("rsync")
         .arg("-av")
         .arg("-P")
-        .arg(&dot)
+        .arg(dottmux)
         .arg(".")
         .cwd(tmux)
         .stdout(Redirection::Pipe)
@@ -143,7 +147,7 @@ fn pulldot() {
     let out = Exec::cmd("rsync")
         .arg("-av")
         .arg("-P")
-        .arg(&dot)
+        .arg(dotion)
         .arg(".")
         .cwd(ion)
         .stdout(Redirection::Pipe)
@@ -155,7 +159,7 @@ fn pulldot() {
     let out = Exec::cmd("rsync")
         .arg("-av")
         .arg("-P")
-        .arg(&dot)
+        .arg(dotalac)
         .arg(".")
         .cwd(alac)
         .stdout(Redirection::Pipe)
