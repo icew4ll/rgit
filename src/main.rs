@@ -13,13 +13,14 @@ use subprocess::{Exec, Redirection};
 /// IceSync
 #[derive(Debug, StructOpt)]
 struct Cli {
-    git: String,
+    /// gitvim, gitdot, gitrgit, pulldot, gitall
+    command: String,
     #[structopt(long = "verbose", short = "v", parse(from_occurrences))]
     verbosity: u8,
 }
 
 // main {{{
-main!(|args: Cli, log_level: verbosity| match args.git.as_ref() {
+main!(|args: Cli, log_level: verbosity| match args.command.as_ref() {
     "gitvim" => gitpush("/m/vim".to_string()),
     "gitdot" => gitpush("/m/dot".to_string()),
     "gitrgit" => gitpush("/m/rgit".to_string()),

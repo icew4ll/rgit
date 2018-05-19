@@ -5,12 +5,7 @@ authors = ["icew4ll <icew4ll.io>"]
 
 [dependencies]
 subprocess = "0.1.12"
-csv = "1.0.0-beta.5"
 quicli = "0.2.0"
 chrono = "0.4.2"
-serde = "1.0.55"
-structopt = "0.2.8"
 dotenv = "0.11.0"
 dotenv_codegen = "0.11.0"
-serde_derive = "1.0.55"
-envy = "0.3.2"
